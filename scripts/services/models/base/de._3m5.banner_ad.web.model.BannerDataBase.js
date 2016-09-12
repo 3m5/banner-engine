@@ -3,7 +3,7 @@
 // DO NOT MODIFY THIS FILE. IT IS GENERATED AND WILL BE OVERWRITTEN!
 // (c) 06.01.2015 3m5. Media GmbH
 // -----------------------------
-
+let Coco = require("3m5-coco");
 
 module.exports = dejavu.Class.declare({
 	$name: 'de._3m5.banner_ad.web.model.BannerDataBase',

@@ -1,3 +1,4 @@
+let Coco = require("3m5-coco");
 /**
  * Class: PersonalBannerData
  *

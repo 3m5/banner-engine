@@ -24,7 +24,11 @@ $.extend(window.Bannertool, {
 // -----------------------------
 $(function() {
     //initialize banner main View
-    if(Bannertool.autoStart == true) {
-        new window.Bannertool.BannerView(new window.Bannertool.BannerModel({adSpaceId:Bannertool.adSpaceId}));
+    if(window.Bannertool.autoStart == true) {
+        let bannerView = new window.Bannertool.BannerView(new window.Bannertool.BannerModel({adSpaceId:Bannertool.adSpaceId}));
+        if(window.Bannertool.adSpaceData != null) {
+            //auto render banner engine, if data is already set
+            bannerView.render();
+        }
     }
 });

@@ -1,9 +1,9 @@
 var gulp         = require('gulp'),
     browserify   = require('browserify'),
+	babel        = require('gulp-babel'),
     clean        = require('gulp-rimraf'),
     es6ify       = require('es6ify'),
     hbsfy        = require('hbsfy'),
-    bulkify      = require('bulkify'),
     source       = require('vinyl-source-stream'),
     streamify    = require('gulp-streamify'),
     concat       = require('gulp-concat'),
@@ -18,6 +18,8 @@ var gulp         = require('gulp'),
     argv         = require('yargs').argv,
     gulpif       = require('gulp-if'),
     uglify       = require('gulp-uglify'),
+	server       = require('gulp-webserver'),
+	runsSequence = require('run-sequence'),
     plumber      = require('gulp-plumber');
 
 es6ify.traceurOverrides = {experimental: true};
@@ -58,8 +60,14 @@ gulp.task('stylesheets', function() {
 
 // clean up target folder
 gulp.task('clean', function() {
-    return gulp.src(["build/*"], {read: false})
+    return gulp.src(["build/*", "lib/*"], {read: false})
         .pipe(clean());
+});
+
+// clean up target folder
+gulp.task('clean-lib', function() {
+	return gulp.src(["lib/*"], {read: false})
+		.pipe(clean());
 });
 
 // copy local index file to build folder
@@ -79,6 +87,17 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('./build/js/vendor'));
 });
 
+
+gulp.task('babel', function() {
+	return gulp.src('scripts/**/*.js')
+		.pipe(babel({
+			presets: ['es2015', 'stage-2', 'stage-3'],
+			plugins: ['es6-promise']
+		}))
+		.pipe(gulp.dest('lib/'));
+});
+
+
 // Rerun the task when a file changes
 gulp.task('watch', function() {
 	gulp.watch('scripts/**', ['scripts']);
@@ -86,6 +105,22 @@ gulp.task('watch', function() {
 	gulp.watch('stylesheets/**', ['stylesheets']);
 	gulp.watch('html/**', ['html']);
     gulp.watch('scripts/vendor/**', ['vendor']);
+});
+
+
+gulp.task('serve', function () {
+	gulp.run('vendor');
+	gulp.run('scripts');
+	gulp.run('html');
+	gulp.run('stylesheets');
+	gulp.src(['./build', './build/js'])
+		.pipe(server({
+			port: 9090,
+			open: true,
+			livereload: true,
+			directoryListing: false
+		}));
+	return gulp.watch(['scripts/**', 'stylesheets/**', 'templates/**', 'html/**'], ['scripts', 'html', 'vendor', 'stylesheets']);
 });
 
 // The default task (called when you run `gulp` from cli)

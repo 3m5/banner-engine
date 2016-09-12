@@ -5,6 +5,8 @@
 var de__3m5_banner_ad_web_model_BannerDataBase = require('./base/de._3m5.banner_ad.web.model.BannerDataBase.js');
 var PersonalBannerDataCollection = require("../../services/models/PersonalBannerDataCollection.js");
 
+let base64 = require("js-base64").Base64;
+
 module.exports = dejavu.Class.declare({
 	$name: 'de._3m5.banner_ad.web.model.BannerData',
 	$extends: de__3m5_banner_ad_web_model_BannerDataBase,
@@ -21,12 +23,14 @@ module.exports = dejavu.Class.declare({
         } else {
             //make sure old non-utf8-decoded data does not crash the app
             try {
-                json = JSON.parse($.base64.decode(this.getBannerData(),true));
+                json = JSON.parse(base64.decode(this.getBannerData()));
             } catch (e) {
-                json = JSON.parse($.base64.decode(this.getBannerData()));
+                json = JSON.parse(base64.decode(this.getBannerData()));
             }
             personalData = json["personalData"];
         }
+
+        console.log(this.$name + ".decoded personalData ", personalData);
 
         this.setBannerData(new PersonalBannerDataCollection(personalData));
         //this.setBannerData(JSON.parse($.base64.decode(this.getBannerData())));
@@ -39,9 +43,9 @@ module.exports = dejavu.Class.declare({
 
             //make sure old non-utf8-decoded data does not crash the app
             try {
-                json = JSON.parse($.base64.decode(this.getTemplateData(),true));
+                json = JSON.parse(base64.decode(this.getTemplateData(),true));
             } catch(e) {
-                json = JSON.parse($.base64.decode(this.getTemplateData()));
+                json = JSON.parse(base64.decode(this.getTemplateData()));
             }
 
             //console.log("base64 decoded '" + base64Decoed + "'");

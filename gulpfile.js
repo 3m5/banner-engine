@@ -78,13 +78,10 @@ gulp.task('html', function() {
 });
 
 // copy local js sources to build folder
-gulp.task('vendor', function() {
-    return gulp.src([
-        'scripts/vendor/*.*'
-    ])
-    .pipe(plumber())
-    .pipe(concat('vendor.js'))
-    .pipe(gulp.dest('./build/js/vendor'));
+gulp.task('vendor', function () {
+	gulp.src(['node_modules/3m5-coco/lib/vendor/**'])
+	//.pipe(gulpif(argv.maven, uglify()))
+		.pipe(gulp.dest('./build/js/'));
 });
 
 

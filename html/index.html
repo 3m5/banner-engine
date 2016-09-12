@@ -5,11 +5,16 @@
 	<meta charset="UTF-8">
 
 	<link rel="stylesheet" href="css/engine.css"/>
-	<script src="js/vendor/vendor.js"></script>
+	<script src="js/dejavu/dejavu.js"></script>
 
 	<script>
-		Coco.config.baseUrl = 'http://bannertool:9080/toolbox/';
-		Coco.config.restService.path = 'rest';
+		window.CocoConfig = {
+			baseUrl: "/",
+			restService: {
+				path: "rest"
+			},
+			locale: "de"
+		};
 		//Coco.BaseRestService.XHR_FIELDS = null;
 
         var Bannertool = {

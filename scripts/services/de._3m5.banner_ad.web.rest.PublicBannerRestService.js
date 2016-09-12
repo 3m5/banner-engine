@@ -4,7 +4,7 @@
 
 var de__3m5_banner_ad_web_rest_PublicBannerRestServiceBase = require('./base/de._3m5.banner_ad.web.rest.PublicBannerRestServiceBase.js');
 
-dejavu.Class.declare({
+var PublicBannerRestService = dejavu.Class.declare({
     //unique service class
 	$name: 'de._3m5.banner_ad.web.rest.PublicBannerRestService',
 	$extends: de__3m5_banner_ad_web_rest_PublicBannerRestServiceBase,
@@ -31,4 +31,6 @@ dejavu.Class.declare({
         //disable CORS via xhr, change it if you want
     }
 
-}).$service();
+});
+
+module.exports = new PublicBannerRestService();

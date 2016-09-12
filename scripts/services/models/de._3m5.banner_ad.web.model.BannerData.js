@@ -2,10 +2,11 @@
 // de._3m5.banner_ad.web.model.BannerData
 // -----------------------------
 
+var Coco   = require("3m5-coco"),
+    base64 = require("js-base64").Base64;
+
 var de__3m5_banner_ad_web_model_BannerDataBase = require('./base/de._3m5.banner_ad.web.model.BannerDataBase.js');
 var PersonalBannerDataCollection = require("../../services/models/PersonalBannerDataCollection.js");
-
-let base64 = require("js-base64").Base64;
 
 module.exports = dejavu.Class.declare({
 	$name: 'de._3m5.banner_ad.web.model.BannerData',

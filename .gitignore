@@ -1,0 +1,10 @@
+.idea/
+.svn/
+/node_modules/
+/lib/
+/build/
+/data/
+npm-debug.log
+.editorconfig
+pom.xml
+gulp-build.xml

@@ -1,0 +1,55 @@
+@import "./vendor/normalize.less";
+
+html, body, a {
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.banner-container {
+  overflow: hidden;
+  clear:both;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  background-color: #cecece;
+
+  img {
+    max-width: 100%;
+  }
+
+  .slide {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+  }
+
+  .element_text,
+  .element_image,
+  .element_polygon{
+    position: absolute;
+
+    &.fixed {
+      overflow: hidden;
+    }
+  }
+
+  .element_image,
+  .element_polygon {
+    z-index: 1;
+  }
+
+  .element_text {
+    z-index: 2;
+  }
+
+}

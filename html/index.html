@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+<head>
+	<title>3m5. Banner.Preview</title>
+	<meta charset="UTF-8">
+
+	<link rel="stylesheet" href="css/engine.css"/>
+	<script src="js/vendor/vendor.js"></script>
+
+	<script>
+		Coco.config.baseUrl = 'http://bannertool:9080/toolbox/';
+		Coco.config.restService.path = 'rest';
+		//Coco.BaseRestService.XHR_FIELDS = null;
+
+        var Bannertool = {
+            autoStart: true,
+            adSpaceId: "308154ca-5a52-4fac-a4b3-92c1dfca8fb1", //ef4b511c-dbf8-49ac-8a9b-63be535452ef",
+            adSpaceData: null
+        }
+
+	</script>
+
+	<script src="js/engine.js"></script>
+
+</head>
+<body>
+    <a href="http://www.google.de" target="_blank">
+        <span class="content banner-container"></span>
+    </a>
+</body>
+</html>

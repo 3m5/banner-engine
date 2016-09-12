@@ -1,0 +1,38 @@
+<div style="max-width:{{width}}px; max-height:{{height}}px;" data-url="{{linkUrl}}">
+    {{#each templateData}}
+        <div class="slide" id="slide{{@index}}"
+             style="max-width:{{../width}}px; max-height: {{../height}}px; background-image: url('{{backgroundImage}}'); display:{{#ifCond @index "==" 0}}block{{else}}none{{/ifCond}};
+            {{#if this.easeIn}}
+                {{parseEaseParameter this.easeIn.startParameter}}
+            {{/if}}
+                ">
+            {{#each this.elements}}
+                {{#ifCond this.type "==" "TEXT"}}
+                    <div class="element_text {{#ifNot this.editable}}fixed{{/ifNot}}" id="{{this.id}}" data-group-id="{{this.groupId}}" style="width: {{this.width}}px; {{#ifNot this.editable}}height:{{this.height}}px;{{/ifNot}} left:{{this.left}}px; top:{{this.top}}px; color:{{this.color}}; {{#if this.textAlign}}text-align:{{this.textAlign}};{{/if}} {{#if this.fontSize}}font-size:{{this.fontSize}}px;{{/if}} {{#if this.fontFace}}font-family:'{{this.fontFace}}';{{/if}} {{#if this.fontWeight}}font-weight: {{this.fontWeight}};{{/if}}
+                        {{#if this.easeIn}}
+                            {{parseEaseParameter this.easeIn.startParameter}}
+                        {{/if}}" data-type="{{this.type}}" data-editable="{{this.editable}}">
+                        {{#ifNot this.editable}}
+                            {{{nl2br this.dataDefault}}}
+                        {{/ifNot}}
+                    </div>
+                {{/ifCond}}
+                {{#ifCond this.type "==" "IMAGE"}}
+                    <img class="element_image {{#ifNot this.editable}}fixed{{/ifNot}}" id="{{this.id}}" data-group-id="{{this.groupId}}" style="left:{{this.left}}px; top:{{this.top}}px; width:{{this.width}}px; {{#if this.editable}}height:{{this.height}}px;{{/if}}
+                        {{#if this.easeIn}}
+                            {{parseEaseParameter this.easeIn.startParameter}}
+                        {{/if}}" data-type="{{this.type}}" src="{{this.dataDefault}}" data-editable="{{this.editable}}"/>
+                {{/ifCond}}
+                {{#ifCond this.type "==" "POLYGON"}}
+                    <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" version="1.1" class="element_polygon" id="{{this.id}}"
+                        {{#if this.easeIn}}
+                            style="{{parseEaseParameter this.easeIn.startParameter}}"
+                        {{/if}}" data-type="{{this.type}}" >
+                        <path width="100%" height="100%" fill="{{this.color}}" stroke="{{this.color}}" d="{{this.definition}}">
+                        </path>
+                    </svg>
+                {{/ifCond}}
+            {{/each}}
+        </div>
+    {{/each}}
+</div>

@@ -14,31 +14,41 @@ var gulp         = require('gulp'),
     autoprefixer = require('autoprefixer-core'),
     postcss      = require('gulp-postcss'),
     minify       = require('gulp-clean-css'),
+	handlebars   = require('gulp-compile-handlebars'),
+	rename       = require('gulp-rename'),
 
     argv         = require('yargs').argv,
     gulpif       = require('gulp-if'),
     uglify       = require('gulp-uglify'),
 	server       = require('gulp-webserver'),
 	runsSequence = require('run-sequence'),
-    plumber      = require('gulp-plumber');
+    plumber      = require('gulp-plumber'),
+	domain       = require('domain'),
+	tap          = require('gulp-tap'),
+	webpack      = require('webpack'),
+	devserver    = require('webpack-dev-server'),
+	gutil        = require('gulp-util');
+
 
 es6ify.traceurOverrides = {experimental: true};
 
-// Browserify, transform and concat all javascript
-gulp.task('scripts', function() {
-	return browserify('./scripts/app.js')
-		.add(es6ify.runtime)
-		.transform(hbsfy)
-		.transform(es6ify.configure(/^(?!.*node_modules)+.+\.js$/))
-		.bundle()
-		.pipe(plumber())
-		.pipe(source('app.js'))
-		.pipe(streamify(concat('engine.js')))
-		// uglify javascript in production
-		.pipe(gulpif(argv.production, uglify()))
-		.pipe(gulp.dest('build/js'))
-		// don't livereload in production
-		.pipe(gulpif(argv.dev, livereload()));
+var config       = require('./webpack.config.js');
+
+var webpackCompiler = webpack(config);
+
+gulp.task('webpack-scripts', function () {
+	webpackCompiler.run(function () {
+	});
+});
+
+gulp.task('webpack-dev-server', function () {
+	return new devserver(webpackCompiler, {
+		contentBase: "./build",
+		quiet:       true,
+		inline:      true
+	}).listen(9090, "0.0.0.0", function (err) {
+		if (err) throw new util.PluginError("webpack-dev-server", err);
+	});
 });
 
 // Convert, prefixize and concat all .less files
@@ -54,8 +64,8 @@ gulp.task('stylesheets', function() {
 		// minify css in production
 		.pipe(gulpif(argv.production, minify()))
 		.pipe(gulp.dest('build/css'))
-        .pipe(gulpif(argv.dev, livereload()));
-		//.pipe(gulpif(!argv.production, livereload()))
+		.pipe(gulp.dest('lib/css'))
+		.pipe(gulpif(!argv.production, livereload()))
 });
 
 // clean up target folder
@@ -64,26 +74,39 @@ gulp.task('clean', function() {
         .pipe(clean());
 });
 
-// clean up target folder
+// clean up target lib folder
 gulp.task('clean-lib', function() {
 	return gulp.src(["lib/*"], {read: false})
 		.pipe(clean());
 });
 
 // copy local index file to build folder
-gulp.task('html', function() {
-    return gulp.src('html/**')
-        .pipe(gulp.dest('./build'))
-        .pipe(gulpif(argv.dev, livereload()));
+gulp.task('html', function () {
+	return gulp.src('./html/index.hbs')
+		.pipe(handlebars(
+			{
+				show_dev_scripts: !argv.stage,
+			},
+			{
+				batch:   [
+					'./html'
+				],
+				helpers: {
+					getText: function () {
+					}
+				}
+			}))
+		.pipe(rename('index.html'))
+		.pipe(gulp.dest("./build"))
+		.pipe(gulpif(!argv.production, livereload()));
 });
 
 // copy local js sources to build folder
 gulp.task('vendor', function () {
-	gulp.src(['node_modules/3m5-coco/lib/vendor/**'])
-	//.pipe(gulpif(argv.maven, uglify()))
-		.pipe(gulp.dest('./build/js/'));
+	return gulp.src(['node_modules/3m5-coco/lib/vendor/**'])
+		.pipe(gulp.dest('./build/js/'))
+		.pipe(gulpif(!argv.production, livereload()));
 });
-
 
 gulp.task('babel', function() {
 	return gulp.src('scripts/**/*.js')
@@ -94,33 +117,21 @@ gulp.task('babel', function() {
 		.pipe(gulp.dest('lib/'));
 });
 
+gulp.task('compile', function() {
+	runsSequence(['clean-lib'], ['babel', 'stylesheets']);
+});
 
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-	gulp.watch('scripts/**', ['scripts']);
-    gulp.watch('templates/**', ['scripts']);
-	gulp.watch('stylesheets/**', ['stylesheets']);
-	gulp.watch('html/**', ['html']);
-    gulp.watch('scripts/vendor/**', ['vendor']);
+gulp.task('webpack-watch', function () {
+	livereload.listen(10110);
+	gulp.watch(['stylesheets/**/*.less'], ['stylesheets']);
+	gulp.watch('html/**/*.hbs', ['html']);
+	gulp.watch('templates/**/*.hbs', ['html']);
 });
 
 
-gulp.task('serve', function () {
-	gulp.run('vendor');
-	gulp.run('scripts');
-	gulp.run('html');
-	gulp.run('stylesheets');
-	gulp.src(['./build', './build/js'])
-		.pipe(server({
-			port: 9090,
-			open: true,
-			livereload: true,
-			directoryListing: false
-		}));
-	return gulp.watch(['scripts/**', 'stylesheets/**', 'templates/**', 'html/**'], ['scripts', 'html', 'vendor', 'stylesheets']);
-});
+gulp.task('serve', ['webpack-watch', 'webpack-dev-server', 'html', 'stylesheets', 'vendor']);
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['stylesheets', 'scripts', 'html', 'vendor', 'watch']);
+gulp.task('default', ['serve']);
 //maven task, without watcher
-gulp.task('maven', ['stylesheets', 'scripts', 'vendor', 'html']);
+gulp.task('maven', ['webpack-scripts', 'stylesheets', 'webpack-scripts', 'vendor', 'html']);

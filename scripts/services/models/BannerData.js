@@ -31,17 +31,15 @@ module.exports = dejavu.Class.declare({
             personalData = json["personalData"];
         }
 
-        console.log(this.$name + ".decoded personalData ", personalData);
+        let BannerEngine = require("../../BannerEngine");
+        if(BannerEngine.config.debug) {
+            console.log(this.$name + ".decoded personalData ", personalData);
+        }
 
         this.setBannerData(new PersonalBannerDataCollection(personalData));
-        //this.setBannerData(JSON.parse($.base64.decode(this.getBannerData())));
-
-        //this._createDummyData();
-        //return;
 
         //decode base64 template data
         if(!Coco.StringUtils.isEmpty(this.getTemplateData())) {
-
             //make sure old non-utf8-decoded data does not crash the app
             try {
                 json = JSON.parse(base64.decode(this.getTemplateData(),true));
@@ -49,7 +47,6 @@ module.exports = dejavu.Class.declare({
                 json = JSON.parse(base64.decode(this.getTemplateData()));
             }
 
-            //console.log("base64 decoded '" + base64Decoed + "'");
             this.setTemplateData(json);
 
         } else {
@@ -215,56 +212,7 @@ module.exports = dejavu.Class.declare({
                     }
                 }
             ]
-        }/*,
-            {
-                backgroundImage: "http://www.gruppenunterkunft.de/images/titel/dresden/dresden-gruppenreisen-klassenfahrten-gruppenunterkunft-de-sh-1010.jpg",
-                duration: 3,
-                easeIn: {
-                    duration: 200,
-                    type: "FADE",
-                    ease: "LINEAR",
-                    startParameter: {opacity: 0},
-                    endParameter: {opacity: 1}
-                },
-                easeOut: {
-                    duration: 200,
-                    type: "FADE",
-                    ease: "LINEAR",
-                    startParameter: {opacity: 1},
-                    endParameter: {opacity: 0}
-                },
-                elements: [
-                    {
-                        id: "phone",
-                        type: "TEXT",
-                        left: 10,
-                        top: 10,
-                        width: 140,
-                        height: 20,
-                        label: "Ihre Telefonnummer",
-                        dataDefault: "defaultText",
-                        color: "#ff0000",
-                        editable: false,
-                        easeIn: {
-                            time: 0,
-                            duration: 200,
-                            type: "FADE",
-                            ease: "LINEAR",
-                            startParameter: {opacity: 0, top: "0px"},
-                            endParameter: {opacity: 1, top: "200px"}
-                        },
-                        easeOut: {
-                            time: 1.5,
-                            duration: 200,
-                            type: "FADE",
-                            ease: "LINEAR",
-                            startParameter: {opacity: 1, top: "200px"},
-                            endParameter: {opacity: 0, top: "0px"}
-                        }
-                    }
-                ]
-            }*/];
-        //console.log(JSON.stringify(templateData));
+        }];
         this.setTemplateData(templateData);
     }
 

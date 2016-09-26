@@ -1,7 +1,7 @@
 let Coco       = require("3m5-coco"),
 	Handlebars = require('handlebars/runtime');
 
-var BannerDataModel = require("../services/models/de._3m5.banner_ad.web.model.BannerData.js");
+var BannerDataModel = require("../services/models/BannerData.js");
 
 /**
  * Class: BannerMainView
@@ -19,8 +19,6 @@ module.exports = dejavu.Class.declare({
 	$name:    "BannerMainView",
 	//inheritance
 	$extends: Coco.View,
-	//version
-	version:  "0.2.0",
 	//jQuery selector to add this view
 	_anchor:  ".banner-container",
 	//jQuery events to handle directly
@@ -49,8 +47,8 @@ module.exports = dejavu.Class.declare({
 			this.onRender();
 		});
 
-		console.log(this.$name + " (v" + this.version + ") initialized!");
-		if (Bannertool.adSpaceData == null) {
+		let BannerEngine = require("../BannerEngine");
+		if (BannerEngine.config.adSpaceData == null) {
 			this._getService("PublicBannerRestService").getAdSpaceDataGET(this._model.getAdSpaceId(), response => {
 					//console.log("success: ", response.getAttributes());
 					this._model = response;
@@ -61,14 +59,18 @@ module.exports = dejavu.Class.declare({
 				}
 			);
 		} else {
-			console.log(this.$name + ".adSpaceData already set ", Bannertool.adSpaceData);
-			this._model = new BannerDataModel(Bannertool.adSpaceData);
+			if(BannerEngine.config.debug) {
+				console.log(this.$name + ".adSpaceData already set ", BannerEngine.config.adSpaceData);
+			}
+			this._model = new BannerDataModel(BannerEngine.config.adSpaceData);
 			//call render external, because $el is actually not set
 			//this.render();
 		}
 	},
 
 	onRender() {
+		let BannerEngine = require("../BannerEngine");
+
 		var elementGroups      = [];
 		var groupedDomElements = {};
 
@@ -80,16 +82,22 @@ module.exports = dejavu.Class.declare({
 					if (personalBannerData.getElementId() === templateElement.id) {
 						var domElement = $("#" + personalBannerData.getElementId());
 						if (domElement == null || domElement[0] == null) {
-							console.warn("domelement not found with id: -" + personalBannerData.getElementId() + "- !");
+							if(BannerEngine.config.debug) {
+								console.warn("domelement not found with id: -" + personalBannerData.getElementId() + "- !");
+							}
 							return;
 						}
 						if (Coco.StringUtils.isEmpty(personalBannerData.getValue())) {
-							console.info("replace element with empty content...");
+							if(BannerEngine.config.debug) {
+								console.info("replace element with empty content...");
+							}
 							//return;
 						}
 						if (domElement.data("editable") == false) {
 							//do not replace non editable elements
-							console.warn("do not edit non editable elements ", domElement);
+							if(BannerEngine.config.debug) {
+								console.warn("do not edit non editable elements ", domElement);
+							}
 							return;
 						}
 
@@ -115,7 +123,9 @@ module.exports = dejavu.Class.declare({
 								$("#" + personalBannerData.getElementId() + " path").attr("stroke", personalBannerData.getValue());
 								break;
 							default:
-								console.error("UNKNOWN TYPE: " + domElement.data("type"));
+								if(BannerEngine.config.debug) {
+									console.error("UNKNOWN TYPE: " + domElement.data("type"));
+								}
 								break;
 						}
 					}
@@ -124,7 +134,9 @@ module.exports = dejavu.Class.declare({
 		});
 
 		//reorganize grouped elements after replacing content by custom values
-		console.log("reorganize grouped elements after replacing content by custom values ", elementGroups);
+		if(BannerEngine.config.debug) {
+			console.log("reorganize grouped elements after replacing content by custom values ", elementGroups);
+		}
 		//iterate over group names
 		var nextY = 0;
 		//var margin = 5;
@@ -142,7 +154,6 @@ module.exports = dejavu.Class.declare({
 				nextY = domElement.position().top + domElement.height();
 			}
 		}
-		//console.log("reorganize grouped elements after replacing content by custom values ", groupedDomElements);
 
 		//start slide animation
 		this._startSlideAnimation(true, 0);
@@ -214,12 +225,15 @@ module.exports = dejavu.Class.declare({
 	},
 
 	_animateElements(slide) {
+		let BannerEngine = require("../BannerEngine");
 		//animate elements now
 		$(slide.elements).each((index, element) => {
 			if (element.easeIn)
 				this.__timeouts.push(setTimeout(() => {
 					this._animate("#" + element.id, element.easeIn, () => {
-						console.log("animate element: ", element);
+						if(BannerEngine.config.debug) {
+							console.log("animate element: ", element);
+						}
 						//element animation complete, start timer to hide element
 						this.__timeouts.push(setTimeout(() => {
 							this._animate("#" + element.id, element.easeOut);
@@ -230,6 +244,7 @@ module.exports = dejavu.Class.declare({
 	},
 
 	_animate(selector, ease, callback) {
+		let BannerEngine = require("../BannerEngine");
 		try {
 			//console.log("animate from: ", ease.startParameter);
 			if (ease.duration == null) {
@@ -241,7 +256,9 @@ module.exports = dejavu.Class.declare({
 			$(selector).css(ease.startParameter);
 			$(selector).stop().animate(ease.endParameter, ease.duration, callback);
 		} catch (error) {
-			console.error("invalid animation properties! ", error, ease);
+			if(BannerEngine.config.debug) {
+				console.error("invalid animation properties! ", error, ease);
+			}
 			callback();
 		}
 	},

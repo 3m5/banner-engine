@@ -1,4 +1,3 @@
-var Coco = require('3m5-coco');
 require("babel-polyfill");
 
 // Handlebars helpers
@@ -57,6 +56,7 @@ module.exports = BannerEngine = class BannerEngine {
 		//delete config setter after setting config :)
 		delete BannerEngine.setConfig;
 
+		var Coco = require('3m5-coco');
 		try {
 			Coco;
 		} catch (error) {

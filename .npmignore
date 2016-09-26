@@ -7,13 +7,13 @@ npm-debug.log
 .dejavurc
 .npmignore
 .gitignore
+pom.xml
 .editorconfig
 #sources
 data
 html
 stylesheets
 scripts
-templates
 #compiled test data
 build
 #npm sources

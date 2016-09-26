@@ -1,5 +1,11 @@
 # 3m5.Banner-Engine changelog
 
+## 0.2.2
+
+- added banner template to npm export
+- removed useless files
+- removed fixed normalize.css from source code - get it from npm module
+
 ## 0.2.0
 
 - use 3m5-coco as npm module

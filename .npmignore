@@ -1,0 +1,20 @@
+#repositories
+.idea
+.git
+.svn
+#config
+npm-debug.log
+.dejavurc
+.npmignore
+.gitignore
+.editorconfig
+#sources
+data
+html
+stylesheets
+scripts
+templates
+#compiled test data
+build
+#npm sources
+node_modules

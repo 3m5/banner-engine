@@ -2,11 +2,12 @@
   "name": "3m5-banner-engine",
   "version": "0.2.0",
   "description": "Animation engine for Banner space with different formats & templates",
+  "main": "lib/BannerEngine.js",
   "bugs": {
     "url": "https://github.com/3m5/banner-engine/issues",
     "email": "andreas.wiedenfeld@3m5.de"
   },
-  "repositiry": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/3m5/banner-engine.git"
   },
